@@ -65,7 +65,7 @@ func (s *service) Health() map[string]string {
 	// Note: By extracting and simplifying like this, `log.Fatalf("db down: %v", err)`
 	// can be changed into a standard error instead of a fatal error.
 	if err != nil {
-		log.Fatalf("db down: %v", err)
+		log.Printf("db down: %v", err)
 	}
 
 	// Redis is up

@@ -1,5 +1,4 @@
 services:
-{{- if .AdvancedOptions.docker }}
   app:
     build:
       context: .
@@ -21,21 +20,6 @@ services:
         condition: service_healthy
     networks:
       - blueprint
-{{- end }}
-{{- if and .AdvancedOptions.react .AdvancedOptions.docker }}
-  frontend:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: frontend
-    restart: unless-stopped
-    depends_on:
-      - app
-    ports:
-      - 5173:5173
-    networks:
-      - blueprint
-{{- end }}
   mysql_bp:
     image: mysql:8.0
     restart: unless-stopped
@@ -48,7 +32,6 @@ services:
       - "${BLUEPRINT_DB_PORT}:3306"
     volumes:
       - mysql_volume_bp:/var/lib/mysql
-    {{- if .AdvancedOptions.docker }}
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "${BLUEPRINT_DB_HOST}", "-u", "${BLUEPRINT_DB_USERNAME}", "--password=${BLUEPRINT_DB_PASSWORD}"]
       interval: 5s
@@ -57,11 +40,8 @@ services:
       start_period: 15s 
     networks:
       - blueprint
-    {{- end }}
 
 volumes:
   mysql_volume_bp:
-{{- if .AdvancedOptions.docker }}
 networks:
   blueprint:
-{{- end }}

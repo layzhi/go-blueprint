@@ -9,16 +9,15 @@ import (
 	"time"
 
 	_ "github.com/joho/godotenv/autoload"
-  {{if ne .DBDriver "none"}}
-	"{{.ProjectName}}/internal/database"
-  {{end}}
+
+	"test-verify-app/internal/database"
 )
 
 type Server struct {
 	port int
-  {{if ne .DBDriver "none"}}
-	db   database.Service
-  {{end}}
+
+	db database.Service
+
 	httpServer *http.Server
 }
 
@@ -29,9 +28,8 @@ func NewServer() *Server {
 	}
 	NewServer := &Server{
 		port: port,
-  {{if ne .DBDriver "none"}}
-		db:   database.New(),
-  {{end}}
+
+		db: database.New(),
 	}
 
 	// Declare Server config
@@ -58,9 +56,7 @@ func (s *Server) Shutdown(ctx context.Context) error {
 }
 
 func (s *Server) Close() error {
-  {{if ne .DBDriver "none"}}
+
 	return s.db.Close()
-  {{else}}
-	return nil
-  {{end}}
+
 }

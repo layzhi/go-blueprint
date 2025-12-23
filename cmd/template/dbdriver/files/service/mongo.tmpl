@@ -44,7 +44,7 @@ func (s *service) Health() map[string]string {
 
 	err := s.db.Ping(ctx, nil)
 	if err != nil {
-		log.Fatalf("db down: %v", err) 
+		log.Printf("db down: %v", err) 
 	}
 
 	stats := make(map[string]string)

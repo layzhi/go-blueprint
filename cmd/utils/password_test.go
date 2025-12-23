@@ -12,7 +12,7 @@ func TestGenerateRandomPassword(t *testing.T) {
 		t.Errorf("expected password length %d, got %d", length, len(password))
 	}
 
-	charset := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	charset := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*"
 	for _, char := range password {
 		found := false
 		for _, c := range charset {

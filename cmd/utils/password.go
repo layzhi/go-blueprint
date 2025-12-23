@@ -9,7 +9,7 @@ import (
 // It uses a character set of uppercase, lowercase letters, and numbers.
 // This is used to replace the default hardcoded passwords in the templates.
 func GenerateRandomPassword(length int) string {
-	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*"
 	password := make([]byte, length)
 	for i := range password {
 		num, err := rand.Int(rand.Reader, big.NewInt(int64(len(charset))))

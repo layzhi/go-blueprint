@@ -1,6 +1,6 @@
-# Project {{.ProjectName}}
+# Project test-verify-app
 
-A Go web application built with go-blueprint using {{.ProjectType}} framework.
+A Go web application built with go-blueprint using gin framework.
 
 ## Getting Started
 
@@ -8,9 +8,6 @@ A Go web application built with go-blueprint using {{.ProjectType}} framework.
 
 - Go 1.21+
 - Docker and Docker Compose (for database)
-{{- if .AdvancedOptions.react }}
-- Node.js 18+ and npm
-{{- end }}
 
 ### Quick Start
 
@@ -26,9 +23,7 @@ A Go web application built with go-blueprint using {{.ProjectType}} framework.
 | `PORT` | Server port | `8080` |
 | `APP_ENV` | Application environment | `local` |
 | `SHUTDOWN_TIMEOUT` | Graceful shutdown timeout (seconds) | `5` |
-{{- if ne .DBDriver "none" }}
 | `BLUEPRINT_DB_*` | Database configuration | See `.env.example` |
-{{- end }}
 
 ## API Endpoints
 
@@ -53,8 +48,6 @@ Run the application
 ```bash
 make run
 ```
-
-{{- if or .AdvancedOptions.docker (and (ne .DBDriver "none") (ne .DBDriver "sqlite")) }}
 Create DB container
 ```bash
 make docker-run
@@ -69,7 +62,6 @@ DB Integrations Test:
 ```bash
 make itest
 ```
-{{- end }}
 
 Live reload the application:
 ```bash
