@@ -5,6 +5,12 @@ BLUEPRINT_DB_HOST=localhost
 {{- end }}
 BLUEPRINT_DB_PORT=3306
 BLUEPRINT_DB_DATABASE=blueprint
-BLUEPRINT_DB_USERNAME=melkey
-BLUEPRINT_DB_PASSWORD=password1234
-BLUEPRINT_DB_ROOT_PASSWORD=password4321
+BLUEPRINT_DB_USERNAME=mysql
+# We use a generated password here. 
+# Warning: Security Risk!
+# It is highly recommended to change this password to something more secure.
+BLUEPRINT_DB_PASSWORD={{.DBPassword}}
+BLUEPRINT_DB_ROOT_PASSWORD={{.DBRootPassword}}
+# SSL mode is set to disable by default for development.
+# For production, it is highly recommended to set this to enable.
+BLUEPRINT_DB_SSLMODE=disable

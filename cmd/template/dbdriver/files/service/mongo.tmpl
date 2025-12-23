@@ -47,7 +47,9 @@ func (s *service) Health() map[string]string {
 		log.Fatalf("db down: %v", err) 
 	}
 
-	return map[string]string{
-		"message": "It's healthy",
-	}
+	stats := make(map[string]string)
+	stats["status"] = "up"
+	stats["message"] = "It's healthy"
+
+	return stats
 }

@@ -39,6 +39,8 @@ type Project struct {
 	AdvancedTemplates AdvancedTemplates
 	GitOptions        flags.Git
 	OSCheck           map[string]bool
+	DBPassword        string
+	DBRootPassword    string
 }
 
 type AdvancedTemplates struct {
@@ -251,6 +253,10 @@ func (p *Project) CreateMainFile() error {
 			return err
 		}
 	}
+
+	// Generate random passwords for database
+	p.DBPassword = utils.GenerateRandomPassword(16)
+	p.DBRootPassword = utils.GenerateRandomPassword(16)
 
 	// Check if user.email is set.
 	if p.GitOptions.String() != flags.Skip {
@@ -650,6 +656,15 @@ func (p *Project) CreateMainFile() error {
 		log.Printf("Error injecting .env file: %v", err)
 		return err
 	}
+	
+	// Create .env.example
+	pCopy := *p
+	pCopy.DBPassword = "your_password_here"
+	pCopy.DBRootPassword = "your_root_password_here"
+	err = pCopy.CreateFileWithInjection(root, projectPath, ".env.example", "env")
+	if err != nil {
+		log.Printf("Error injecting .env.example file: %v", err)
+	}
 
 	// Create gitignore
 	gitignoreFile, err := os.Create(filepath.Join(projectPath, ".gitignore"))
@@ -863,6 +878,15 @@ func (p *Project) CreateViteReactProject(projectPath string) error {
 	err = p.CreateFileWithInjection("", projectPath, ".env", "env")
 	if err != nil {
 		return fmt.Errorf("failed to create global .env file: %w", err)
+	}
+
+	// Create .env.example
+	pCopy := *p
+	pCopy.DBPassword = "your_password_here"
+	pCopy.DBRootPassword = "your_root_password_here"
+	err = pCopy.CreateFileWithInjection("", projectPath, ".env.example", "env")
+	if err != nil {
+		log.Printf("Error injecting .env.example file: %v", err)
 	}
 
 	// Read from the global `.env` file and create the frontend-specific `.env`

@@ -5,14 +5,16 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
 	"time"
 
 	"{{.ProjectName}}/internal/server"
 )
 
-func gracefulShutdown(apiServer *http.Server, done chan bool) {
+func gracefulShutdown(apiServer *server.Server, done chan bool) {
 	// Create context that listens for the interrupt signal from the OS.
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
@@ -23,12 +25,23 @@ func gracefulShutdown(apiServer *http.Server, done chan bool) {
 	log.Println("shutting down gracefully, press Ctrl+C again to force")
 	stop() // Allow Ctrl+C to force shutdown
 
-	// The context is used to inform the server it has 5 seconds to finish
+	shutdownDuration := 5 * time.Second
+	if t := os.Getenv("SHUTDOWN_TIMEOUT"); t != "" {
+		if i, err := strconv.Atoi(t); err == nil {
+			shutdownDuration = time.Duration(i) * time.Second
+		}
+	}
+
+	// The context is used to inform the server it has 5 seconds (or configured value) to finish
 	// the request it is currently handling
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), shutdownDuration)
 	defer cancel()
 	if err := apiServer.Shutdown(ctx); err != nil {
 		log.Printf("Server forced to shutdown with error: %v", err)
+	}
+
+	if err := apiServer.Close(); err != nil {
+		log.Printf("Server failed to close resources: %v", err)
 	}
 
 	log.Println("Server exiting")

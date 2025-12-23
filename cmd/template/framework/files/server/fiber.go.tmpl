@@ -27,3 +27,11 @@ func New() *FiberServer {
 
 	return server
 }
+
+func (s *FiberServer) Close() error {
+  {{if ne .DBDriver "none"}}
+	return s.db.Close()
+  {{else}}
+	return nil
+  {{end}}
+}

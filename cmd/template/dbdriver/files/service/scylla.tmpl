@@ -91,9 +91,6 @@ func (s *service) Health() map[string]string {
 
 	stats := make(map[string]string)
 
-	// Check ScyllaDB health and populate the stats map
-	startedAt := time.Now()
-
 	// Execute a simple query to check connectivity
 	query := "SELECT now() FROM system.local"
 	iter := s.Session.Query(query).WithContext(ctx).Iter()
@@ -114,47 +111,7 @@ func (s *service) Health() map[string]string {
 	// ScyllaDB is up
 	stats["status"] = "up"
 	stats["message"] = "It's healthy"
-	stats["scylla_current_time"] = currentTime.String()
-
-	// Retrieve cluster information
-	// Get keyspace information
-	getKeyspacesQuery := "SELECT keyspace_name FROM system_schema.keyspaces"
-	keyspacesIterator := s.Session.Query(getKeyspacesQuery).Iter()
-
-	stats["scylla_keyspaces"] = strconv.Itoa(keyspacesIterator.NumRows())
-	if err := keyspacesIterator.Close(); err != nil {
-		log.Fatalf("Failed to close keyspaces iterator: %v", err)
-	}
-
-	// Get cluster information
-	var currentDatacenter string
-	var currentHostStatus bool
-
-	var clusterNodesUp uint
-	var clusterNodesDown uint
-	var clusterSize uint
-
-	clusterNodesIterator := s.Session.Query("SELECT dc, up FROM system.cluster_status").Iter()
-	for clusterNodesIterator.Scan(&currentDatacenter, &currentHostStatus) {
-		clusterSize++
-		if currentHostStatus {
-			clusterNodesUp++
-		} else {
-			clusterNodesDown++
-		}
-	}
-
-	if err := clusterNodesIterator.Close(); err != nil {
-		log.Fatalf("Failed to close cluster nodes iterator: %v", err)
-	}
-
-	stats["scylla_cluster_size"] = strconv.Itoa(int(clusterSize))
-	stats["scylla_cluster_nodes_up"] = strconv.Itoa(int(clusterNodesUp))
-	stats["scylla_cluster_nodes_down"] = strconv.Itoa(int(clusterNodesDown))
-	stats["scylla_current_datacenter"] = currentDatacenter
-
-	// Calculate the time taken to perform the health check
-	stats["scylla_health_check_duration"] = time.Since(startedAt).String()
+	
 	return stats
 }
 
