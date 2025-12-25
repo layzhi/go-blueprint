@@ -133,8 +133,8 @@ var createCmd = &cobra.Command{
 
 		if project.ProjectName == "" {
 			isInteractive = true
-			tprogram := tea.NewProgram(textinput.InitialTextInputModel(options.ProjectName, "What is the name of your project?", project))
-			if _, err := tprogram.Run(); err != nil {
+			tprogram = tea.NewProgram(textinput.InitialTextInputModel(options.ProjectName, "What is the name of your project?", project))
+			if _, err = tprogram.Run(); err != nil {
 				log.Printf("Name of project contains an error: %v", err)
 				cobra.CheckErr(textinput.CreateErrorInputModel(err).Err())
 			}
@@ -143,6 +143,7 @@ var createCmd = &cobra.Command{
 				err = fmt.Errorf("'%s' is not a valid module name. Please choose a different name", options.ProjectName.Output)
 				cobra.CheckErr(textinput.CreateErrorInputModel(err).Err())
 			}
+			// ... (omitted purely identical lines for brevity in thought, but tool needs exact context)
 
 			rootDirName = utils.GetRootDir(options.ProjectName.Output)
 			if doesDirectoryExistAndIsNotEmpty(rootDirName) {
@@ -152,7 +153,7 @@ var createCmd = &cobra.Command{
 			project.ExitCLI(tprogram)
 
 			project.ProjectName = options.ProjectName.Output
-			err := cmd.Flag("name").Value.Set(project.ProjectName)
+			err = cmd.Flag("name").Value.Set(project.ProjectName)
 			if err != nil {
 				log.Fatal("failed to set the name flag value", err)
 			}
@@ -162,7 +163,7 @@ var createCmd = &cobra.Command{
 			isInteractive = true
 			step := steps.Steps["framework"]
 			tprogram = tea.NewProgram(multiInput.InitialModelMulti(step.Options, options.ProjectType, step.Headers, project))
-			if _, err := tprogram.Run(); err != nil {
+			if _, err = tprogram.Run(); err != nil {
 				cobra.CheckErr(textinput.CreateErrorInputModel(err).Err())
 			}
 			project.ExitCLI(tprogram)
@@ -172,7 +173,7 @@ var createCmd = &cobra.Command{
 			// this type casting is always safe since the user interface can
 			// only pass strings that can be cast to a flags.Framework instance
 			project.ProjectType = flags.Framework(strings.ToLower(options.ProjectType.Choice))
-			err := cmd.Flag("framework").Value.Set(project.ProjectType.String())
+			err = cmd.Flag("framework").Value.Set(project.ProjectType.String())
 			if err != nil {
 				log.Fatal("failed to set the framework flag value", err)
 			}
@@ -182,7 +183,7 @@ var createCmd = &cobra.Command{
 			isInteractive = true
 			step := steps.Steps["driver"]
 			tprogram = tea.NewProgram(multiInput.InitialModelMulti(step.Options, options.DBDriver, step.Headers, project))
-			if _, err := tprogram.Run(); err != nil {
+			if _, err = tprogram.Run(); err != nil {
 				cobra.CheckErr(textinput.CreateErrorInputModel(err).Err())
 			}
 			project.ExitCLI(tprogram)
@@ -190,7 +191,7 @@ var createCmd = &cobra.Command{
 			// this type casting is always safe since the user interface can
 			// only pass strings that can be cast to a flags.Database instance
 			project.DBDriver = flags.Database(strings.ToLower(options.DBDriver.Choice))
-			err := cmd.Flag("driver").Value.Set(project.DBDriver.String())
+			err = cmd.Flag("driver").Value.Set(project.DBDriver.String())
 			if err != nil {
 				log.Fatal("failed to set the driver flag value", err)
 			}
@@ -209,13 +210,13 @@ var createCmd = &cobra.Command{
 				isInteractive = true
 				step := steps.Steps["advanced"]
 				tprogram = tea.NewProgram((multiSelect.InitialModelMultiSelect(step.Options, options.Advanced, step.Headers, project)))
-				if _, err := tprogram.Run(); err != nil {
+				if _, err = tprogram.Run(); err != nil {
 					cobra.CheckErr(textinput.CreateErrorInputModel(err).Err())
 				}
 				project.ExitCLI(tprogram)
 				for key, opt := range options.Advanced.Choices {
 					project.AdvancedOptions[strings.ToLower(key)] = opt
-					err := cmd.Flag("feature").Value.Set(strings.ToLower(key))
+					err = cmd.Flag("feature").Value.Set(strings.ToLower(key))
 					if err != nil {
 						log.Fatal("failed to set the feature flag value", err)
 					}
@@ -231,13 +232,13 @@ var createCmd = &cobra.Command{
 			isInteractive = true
 			step := steps.Steps["git"]
 			tprogram = tea.NewProgram(multiInput.InitialModelMulti(step.Options, options.Git, step.Headers, project))
-			if _, err := tprogram.Run(); err != nil {
+			if _, err = tprogram.Run(); err != nil {
 				cobra.CheckErr(textinput.CreateErrorInputModel(err).Err())
 			}
 			project.ExitCLI(tprogram)
 
 			project.GitOptions = flags.Git(strings.ToLower(options.Git.Choice))
-			err := cmd.Flag("git").Value.Set(project.GitOptions.String())
+			err = cmd.Flag("git").Value.Set(project.GitOptions.String())
 			if err != nil {
 				log.Fatal("failed to set the git flag value", err)
 			}
@@ -257,7 +258,7 @@ var createCmd = &cobra.Command{
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			if _, err := spinner.Run(); err != nil {
+			if _, err = spinner.Run(); err != nil {
 				cobra.CheckErr(err)
 			}
 		}()

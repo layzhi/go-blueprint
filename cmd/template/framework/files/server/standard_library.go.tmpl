@@ -1,8 +1,9 @@
 package server
 
 import (
+	"context"
 	"fmt"
-	"log"
+	"log/slog"
 	"net/http"
 	"os"
 	"strconv"
@@ -49,7 +50,7 @@ func NewServer() *Server {
 }
 
 func (s *Server) ListenAndServe() error {
-	log.Printf("Server starting on http://localhost:%d", s.port)
+	slog.Info("Server starting", "url", fmt.Sprintf("http://localhost:%d", s.port))
 	return s.httpServer.ListenAndServe()
 }
 

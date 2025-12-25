@@ -413,20 +413,20 @@ func (p *Project) CreateMainFile() error {
 		return err
 	}
 
-	if p.AdvancedOptions[string(flags.React)] {
+	if p.AdvancedOptions[flags.React] {
 		// deselect htmx option automatically since react is selected
-		p.AdvancedOptions[string(flags.Htmx)] = false
-		if err := p.CreateViteReactProject(projectPath); err != nil {
+		p.AdvancedOptions[flags.Htmx] = false
+		if err = p.CreateViteReactProject(projectPath); err != nil {
 			return fmt.Errorf("failed to set up React project: %w", err)
 		}
 
 		// if everything went smoothly, remove tailwing flag option
-		p.AdvancedOptions[string(flags.Tailwind)] = false
+		p.AdvancedOptions[flags.Tailwind] = false
 	}
 
-	if p.AdvancedOptions[string(flags.Tailwind)] {
+	if p.AdvancedOptions[flags.Tailwind] {
 		// select htmx option automatically since tailwind is selected
-		p.AdvancedOptions[string(flags.Htmx)] = true
+		p.AdvancedOptions[flags.Htmx] = true
 
 		err = os.MkdirAll(fmt.Sprintf("%s/%s/assets/css", projectPath, cmdWebPath), 0o755)
 		if err != nil {
@@ -438,7 +438,8 @@ func (p *Project) CreateMainFile() error {
 			return fmt.Errorf("failed to create styles directory: %w", err)
 		}
 
-		inputCssFile, err := os.Create(fmt.Sprintf("%s/%s/styles/input.css", projectPath, cmdWebPath))
+		var inputCssFile *os.File
+		inputCssFile, err = os.Create(fmt.Sprintf("%s/%s/styles/input.css", projectPath, cmdWebPath))
 		if err != nil {
 			return err
 		}
@@ -450,7 +451,8 @@ func (p *Project) CreateMainFile() error {
 			return err
 		}
 
-		outputCssFile, err := os.Create(fmt.Sprintf("%s/%s/assets/css/output.css", projectPath, cmdWebPath))
+		var outputCssFile *os.File
+		outputCssFile, err = os.Create(fmt.Sprintf("%s/%s/assets/css/output.css", projectPath, cmdWebPath))
 		if err != nil {
 			return err
 		}
@@ -463,13 +465,14 @@ func (p *Project) CreateMainFile() error {
 		}
 	}
 
-	if p.AdvancedOptions[string(flags.Htmx)] {
+	if p.AdvancedOptions[flags.Htmx] {
 		// create folders and hello world file
 		err = p.CreatePath(cmdWebPath, projectPath)
 		if err != nil {
 			return err
 		}
-		helloTemplFile, err := os.Create(fmt.Sprintf("%s/%s/hello.templ", projectPath, cmdWebPath))
+		var helloTemplFile *os.File
+		helloTemplFile, err = os.Create(fmt.Sprintf("%s/%s/hello.templ", projectPath, cmdWebPath))
 		if err != nil {
 			return err
 		}
@@ -482,7 +485,8 @@ func (p *Project) CreateMainFile() error {
 			return err
 		}
 
-		baseTemplFile, err := os.Create(fmt.Sprintf("%s/%s/base.templ", projectPath, cmdWebPath))
+		var baseTemplFile *os.File
+		baseTemplFile, err = os.Create(fmt.Sprintf("%s/%s/base.templ", projectPath, cmdWebPath))
 		if err != nil {
 			return err
 		}
@@ -499,7 +503,8 @@ func (p *Project) CreateMainFile() error {
 			return err
 		}
 
-		htmxMinJsFile, err := os.Create(fmt.Sprintf("%s/%s/assets/js/htmx.min.js", projectPath, cmdWebPath))
+		var htmxMinJsFile *os.File
+		htmxMinJsFile, err = os.Create(fmt.Sprintf("%s/%s/assets/js/htmx.min.js", projectPath, cmdWebPath))
 		if err != nil {
 			return err
 		}
@@ -511,7 +516,8 @@ func (p *Project) CreateMainFile() error {
 			return err
 		}
 
-		htmxTailwindConfigJsFile, err := os.Create(fmt.Sprintf("%s/tailwind.config.js", projectPath))
+		var htmxTailwindConfigJsFile *os.File
+		htmxTailwindConfigJsFile, err = os.Create(fmt.Sprintf("%s/tailwind.config.js", projectPath))
 		if err != nil {
 			return err
 		}
@@ -523,7 +529,8 @@ func (p *Project) CreateMainFile() error {
 			return err
 		}
 
-		efsFile, err := os.Create(fmt.Sprintf("%s/%s/efs.go", projectPath, cmdWebPath))
+		var efsFile *os.File
+		efsFile, err = os.Create(fmt.Sprintf("%s/%s/efs.go", projectPath, cmdWebPath))
 		if err != nil {
 			return err
 		}
@@ -540,7 +547,8 @@ func (p *Project) CreateMainFile() error {
 			return err
 		}
 
-		helloGoFile, err := os.Create(fmt.Sprintf("%s/%s/hello.go", projectPath, cmdWebPath))
+		var helloGoFile *os.File
+		helloGoFile, err = os.Create(fmt.Sprintf("%s/%s/hello.go", projectPath, cmdWebPath))
 		if err != nil {
 			return err
 		}
@@ -569,7 +577,7 @@ func (p *Project) CreateMainFile() error {
 	}
 
 	// Create .github/workflows folder and inject release.yml and go-test.yml
-	if p.AdvancedOptions[string(flags.GoProjectWorkflow)] {
+	if p.AdvancedOptions[flags.GoProjectWorkflow] {
 		err = p.CreatePath(gitHubActionPath, projectPath)
 		if err != nil {
 			log.Printf("Error creating path: %s", gitHubActionPath)
@@ -599,12 +607,13 @@ func (p *Project) CreateMainFile() error {
 	// be added to the routes depending on the framework choosen.
 	// Only fiber uses a different websocket library, the other frameworks
 	// all work with the same one
-	if p.AdvancedOptions[string(flags.Websocket)] {
+	if p.AdvancedOptions[flags.Websocket] {
 		p.CreateWebsocketImports(projectPath)
 	}
 
-	if p.AdvancedOptions[string(flags.Docker)] {
-		Dockerfile, err := os.Create(filepath.Join(projectPath, "Dockerfile"))
+	if p.AdvancedOptions[flags.Docker] {
+		var Dockerfile *os.File
+		Dockerfile, err = os.Create(filepath.Join(projectPath, "Dockerfile"))
 		if err != nil {
 			return err
 		}
@@ -618,8 +627,8 @@ func (p *Project) CreateMainFile() error {
 		}
 
 		if p.DBDriver == "none" || p.DBDriver == "sqlite" {
-
-			Dockercompose, err := os.Create(filepath.Join(projectPath, "docker-compose.yml"))
+			var Dockercompose *os.File
+			Dockercompose, err = os.Create(filepath.Join(projectPath, "docker-compose.yml"))
 			if err != nil {
 				return err
 			}
@@ -656,7 +665,7 @@ func (p *Project) CreateMainFile() error {
 		log.Printf("Error injecting .env file: %v", err)
 		return err
 	}
-	
+
 	// Create .env.example
 	pCopy := *p
 	pCopy.DBPassword = "your_password_here"
@@ -820,6 +829,11 @@ func (p *Project) CreateFileWithInjection(pathToCreate string, projectPath strin
 		return err
 	}
 
+	// Create .golangci.yml
+	if err := os.WriteFile(filepath.Join(projectPath, ".golangci.yml"), advanced.GolangCIConfig(), 0644); err != nil {
+		return fmt.Errorf("failed to create .golangci.yml: %w", err)
+	}
+
 	return nil
 }
 
@@ -833,8 +847,8 @@ func (p *Project) CreateViteReactProject(projectPath string) error {
 		return fmt.Errorf("failed to get current directory: %w", err)
 	}
 	defer func() {
-		if err := os.Chdir(originalDir); err != nil {
-			fmt.Fprintf(os.Stderr, "failed to change back to original directory: %v\n", err)
+		if chdirErr := os.Chdir(originalDir); chdirErr != nil {
+			fmt.Fprintf(os.Stderr, "failed to change back to original directory: %v\n", chdirErr)
 		}
 	}()
 
@@ -852,25 +866,25 @@ func (p *Project) CreateViteReactProject(projectPath string) error {
 		"--no-fund")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
-	if err := cmd.Run(); err != nil {
+	if err = cmd.Run(); err != nil {
 		return fmt.Errorf("failed to use create-vite: %w", err)
 	}
 
 	frontendPath := filepath.Join(projectPath, "frontend")
-	if err := os.MkdirAll(frontendPath, 0755); err != nil {
+	if err = os.MkdirAll(frontendPath, 0755); err != nil {
 		return fmt.Errorf("failed to create frontend directory: %w", err)
 	}
 
-	if err := os.Chdir(frontendPath); err != nil {
+	if err = os.Chdir(frontendPath); err != nil {
 		return fmt.Errorf("failed to change to frontend directory: %w", err)
 	}
 
 	srcDir := filepath.Join(frontendPath, "src")
-	if err := os.MkdirAll(srcDir, 0755); err != nil {
+	if err = os.MkdirAll(srcDir, 0755); err != nil {
 		return fmt.Errorf("failed to create src directory: %w", err)
 	}
 
-	if err := os.WriteFile(filepath.Join(srcDir, "App.tsx"), advanced.ReactAppfile(), 0644); err != nil {
+	if err = os.WriteFile(filepath.Join(srcDir, "App.tsx"), advanced.ReactAppfile(), 0644); err != nil {
 		return fmt.Errorf("failed to write App.tsx template: %w", err)
 	}
 
@@ -894,7 +908,7 @@ func (p *Project) CreateViteReactProject(projectPath string) error {
 	vitePort := "8080" // Default fallback
 
 	// Read the global .env file
-	if data, err := os.ReadFile(globalEnvPath); err == nil {
+	if data, readErr := os.ReadFile(globalEnvPath); readErr == nil {
 		lines := strings.Split(string(data), "\n")
 		for _, line := range lines {
 			if strings.HasPrefix(line, "PORT=") {
@@ -906,12 +920,12 @@ func (p *Project) CreateViteReactProject(projectPath string) error {
 
 	// Use a template to generate the frontend .env file
 	frontendEnvContent := fmt.Sprintf("VITE_PORT=%s\n", vitePort)
-	if err := os.WriteFile(filepath.Join(frontendPath, ".env"), []byte(frontendEnvContent), 0644); err != nil {
+	if err = os.WriteFile(filepath.Join(frontendPath, ".env"), []byte(frontendEnvContent), 0644); err != nil {
 		return fmt.Errorf("failed to create frontend .env file: %w", err)
 	}
 
 	// Handle Tailwind configuration if selected
-	if p.AdvancedOptions[string(flags.Tailwind)] {
+	if p.AdvancedOptions[flags.Tailwind] {
 		fmt.Println("Installing Tailwind dependencies (using cache if available)...")
 		cmd := exec.Command("npm", "install",
 			"--prefer-offline",
@@ -919,17 +933,17 @@ func (p *Project) CreateViteReactProject(projectPath string) error {
 			"tailwindcss@^4", "@tailwindcss/vite")
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
-		if err := cmd.Run(); err != nil {
+		if err = cmd.Run(); err != nil {
 			return fmt.Errorf("failed to install Tailwind: %w", err)
 		}
 
 		// Create the vite + react + Tailwind v4 configuration
-		if err := os.WriteFile(filepath.Join(frontendPath, "vite.config.ts"), advanced.ViteTailwindConfigFile(), 0644); err != nil {
+		if err = os.WriteFile(filepath.Join(frontendPath, "vite.config.ts"), advanced.ViteTailwindConfigFile(), 0644); err != nil {
 			return fmt.Errorf("failed to write vite.config.ts: %w", err)
 		}
 
 		srcDir := filepath.Join(frontendPath, "src")
-		if err := os.MkdirAll(srcDir, 0755); err != nil {
+		if err = os.MkdirAll(srcDir, 0755); err != nil {
 			return fmt.Errorf("failed to create src directory: %w", err)
 		}
 
@@ -950,7 +964,12 @@ func (p *Project) CreateViteReactProject(projectPath string) error {
 		}
 
 		// set to false to not re-do in next step
-		p.AdvancedOptions[string(flags.Tailwind)] = false
+		p.AdvancedOptions[flags.Tailwind] = false
+	} else {
+		// Create the vite + react configuration for non-tailwind projects
+		if err := os.WriteFile(filepath.Join(frontendPath, "vite.config.ts"), advanced.ViteConfigFile(), 0644); err != nil {
+			return fmt.Errorf("failed to write vite.config.ts: %w", err)
+		}
 	}
 
 	return nil
@@ -959,7 +978,7 @@ func (p *Project) CreateViteReactProject(projectPath string) error {
 func (p *Project) CreateHtmxTemplates() {
 	routesPlaceHolder := ""
 	importsPlaceHolder := ""
-	if p.AdvancedOptions[string(flags.Htmx)] {
+	if p.AdvancedOptions[flags.Htmx] {
 		routesPlaceHolder += string(p.FrameworkMap[p.ProjectType].templater.HtmxTemplRoutes())
 		importsPlaceHolder += string(p.FrameworkMap[p.ProjectType].templater.HtmxTemplImports())
 	}
@@ -1011,7 +1030,7 @@ func (p *Project) CreateWebsocketImports(appDir string) {
 	if err != nil {
 		log.Fatalf("CreateWebsocketImports failed write template: %v", err)
 	}
-	newImports := strings.Join([]string{string(p.AdvancedTemplates.TemplateImports), importBuffer.String()}, "\n")
+	newImports := strings.Join([]string{p.AdvancedTemplates.TemplateImports, importBuffer.String()}, "\n")
 	p.AdvancedTemplates.TemplateImports = newImports
 }
 

@@ -1,0 +1,25 @@
+run:
+  timeout: 5m
+  tests: true
+  # skip-dirs:
+  #   - cmd/template # Template files usually trigger false positives or are just text
+
+linters:
+  enable:
+    - gofmt
+    - govet
+    - errcheck
+    - staticcheck
+    - unused
+    - gosimple
+    - ineffassign
+    - typecheck
+    - unconvert
+    - unparam
+
+linters-settings:
+  govet:
+    enable:
+      - shadow
+  gofmt:
+    simplify: true

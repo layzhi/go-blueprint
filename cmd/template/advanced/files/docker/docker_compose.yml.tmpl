@@ -23,7 +23,9 @@ services:
       target: frontend
     restart: unless-stopped
     ports:
-      - 5173:5173
+      - ${FRONTEND_PORT:-5173}:${FRONTEND_PORT:-5173}
+    environment:
+      FRONTEND_PORT: ${FRONTEND_PORT:-5173}
     depends_on:
       - app
 {{- end }}

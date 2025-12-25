@@ -31,7 +31,9 @@ services:
     depends_on:
       - app
     ports:
-      - 5173:5173
+      - ${FRONTEND_PORT:-5173}:${FRONTEND_PORT:-5173}
+    environment:
+      FRONTEND_PORT: ${FRONTEND_PORT:-5173}
     networks:
       - blueprint
 {{- end }}

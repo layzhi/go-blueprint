@@ -55,10 +55,27 @@ build:{{- if and .AdvancedOptions.tailwind (not .AdvancedOptions.react) }} tailw
 
 # Run the application
 run:
-	@go run cmd/api/main.go{{- if .AdvancedOptions.react }} &
-	@npm install --prefer-offline --no-fund --prefix ./frontend
-	@npm run dev --prefix ./frontend
-	{{- end }}
+{{- if .AdvancedOptions.react }}
+{{- if .OSCheck.UnixBased }}
+	@trap 'kill 0' EXIT; go run cmd/api/main.go & npm install --prefer-offline --no-fund --prefix ./frontend && npm run dev --prefix ./frontend
+{{- else }}
+	@powershell -Command "Start-Process -NoNewWindow go -ArgumentList 'run','cmd/api/main.go'; npm install --prefer-offline --no-fund --prefix ./frontend; npm run dev --prefix ./frontend"
+{{- end }}
+{{- else }}
+	@go run cmd/api/main.go
+{{- end }}
+
+# Force stop any running instances
+{{- if .OSCheck.UnixBased }}
+stop:
+	@echo "Stopping any running instances..."
+	@-pkill -f "go run cmd/api/main.go" 2>/dev/null || true
+	@-pkill -f "npm run dev --prefix ./frontend" 2>/dev/null || true
+	@echo "Stopped."
+{{- else }}
+stop:
+	@powershell -Command "Get-Process | Where-Object { $_.CommandLine -like '*cmd/api/main.go*' } | Stop-Process -Force -ErrorAction SilentlyContinue"
+{{- end }}
 
 
 {{- if or .AdvancedOptions.docker (and (ne .DBDriver "none") (ne .DBDriver "sqlite")) }}
@@ -95,6 +112,17 @@ docker-down:
 test:
 	@echo "Testing..."
 	@go test ./... -v
+
+# Run the linter
+lint:
+	@echo "Running lint..."
+	@if command -v golangci-lint > /dev/null; then \
+		golangci-lint run; \
+	else \
+		echo "golangci-lint is not installed. Installing..."; \
+		go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest; \
+		golangci-lint run; \
+	fi
 
 {{- if and (ne .DBDriver "none") (ne .DBDriver "sqlite") }}
 # Integrations Tests for the application

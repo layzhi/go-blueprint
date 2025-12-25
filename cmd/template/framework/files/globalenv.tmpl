@@ -1,3 +1,6 @@
 PORT=8080
 APP_ENV=local
 SHUTDOWN_TIMEOUT=5
+{{- if .AdvancedOptions.react }}
+FRONTEND_PORT=5173
+{{- end }}

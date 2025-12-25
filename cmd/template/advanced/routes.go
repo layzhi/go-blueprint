@@ -22,6 +22,12 @@ var reactTailwindAppFile []byte
 //go:embed files/react/app.tsx.tmpl
 var reactAppFile []byte
 
+//go:embed files/react/vite.config.ts.tmpl
+var viteConfigFile []byte
+
+//go:embed files/lint/golangci.yml.tmpl
+var golangciConfig []byte
+
 //go:embed files/tailwind/input.css.tmpl
 var inputCssTemplate []byte
 
@@ -133,6 +139,14 @@ func InputCssTemplateReact() []byte {
 
 func ViteTailwindConfigFile() []byte {
 	return viteTailwindConfigFile
+}
+
+func ViteConfigFile() []byte {
+	return viteConfigFile
+}
+
+func GolangCIConfig() []byte {
+	return golangciConfig
 }
 
 func InputCssTemplate() []byte {

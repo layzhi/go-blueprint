@@ -138,6 +138,11 @@ You can now use the `--advanced` flag when running the `create` command to get a
 - Docker configuration for go project
 - [React](https://react.dev/) frontend written in TypeScript, including an example fetch request to the backend
 
+### Modernization & Code Quality
+- **Structured Logging**: All projects use `log/slog` for improved observability (JSON in prod, Text in local).
+- **Linting**: Built-in `golangci-lint` configuration and `make lint` command.
+- **Vite Proxy**: Seamless frontend-backend integration with configured proxies.
+
 Note: Selecting Tailwind option will automatically select HTMX unless React is explicitly selected
 
 <a id="blueprint-ui"></a>
