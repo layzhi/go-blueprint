@@ -214,6 +214,12 @@ React:
 go-blueprint create --advanced --feature react
 ```
 
+Full Stack Application (Gin, MySQL, React, Docker):
+
+```bash
+go-blueprint create --name test-web --framework gin --driver mysql --advanced --feature react --feature docker --git commit
+```
+
 Or all features at once:
 
 ```bash
